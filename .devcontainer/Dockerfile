@@ -1,30 +1,40 @@
-FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN sudo dpkg --add-architecture i386
+# Оновлення системи та базові утиліти
+RUN apt-get update && apt-get install -y \
+    wget curl git sudo locales keyboard-configuration \
+    x11vnc xfce4 xfce4-terminal xterm dbus-x11 \
+    net-tools xauth xvfb novnc websockify \
+    wine64 winetricks \
+    gnupg2 apt-transport-https software-properties-common \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN sudo apt-get update && sudo apt-get install -y \
-    curl wget git sudo gnupg lsb-release unzip \
-    xvfb x11vnc novnc websockify xfce4 xfce4-terminal \
-    pulseaudio pavucontrol \
-    libasound2 libasound2-plugins \
-    fonts-liberation \
-    && sudo rm -rf /var/lib/apt/lists/*
+# Локаль
+RUN locale-gen en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
-RUN curl -fsSL https://download.spotify.com/debian/pubkey_5E3C45D7B312C643.gpg | sudo gpg --dearmor -o /usr/share/keyrings/spotify.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/spotify.gpg] http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list && \
-    sudo apt-get update && sudo apt-get install -y spotify-client && \
-    sudo rm -rf /var/lib/apt/lists/*
+# Автоматична клавіатура US
+RUN echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | debconf-set-selections \
+    && dpkg-reconfigure -f noninteractive keyboard-configuration
 
+# Spotify репозиторій
+RUN curl -sS https://download.spotify.com/debian/pubkey_5E3C45D7B312C643.gpg | apt-key add - \
+    && echo "deb http://repository.spotify.com stable non-free" > /etc/apt/sources.list.d/spotify.list
+
+# Встановлення Spotify
+RUN apt-get update && apt-get install -y spotify-client && rm -rf /var/lib/apt/lists/*
+
+# Spicetify CLI
 RUN curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh
 
-ENV PATH="/home/vscode/.spicetify:$PATH"
+# Копіюємо стартовий скрипт
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 
-USER vscode
-WORKDIR /home/vscode
+EXPOSE 6080
 
-COPY .devcontainer/startup.sh /home/vscode/startup.sh
-RUN chmod +x /home/vscode/startup.sh
-
-CMD ["/home/vscode/startup.sh"]
+CMD ["/start.sh"]
