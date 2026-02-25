@@ -1,0 +1,7 @@
+{
+  "name": "Spotify + Spicetify Codespace",
+  "dockerFile": "Dockerfile",
+  "forwardPorts": [6080], 
+  "remoteUser": "root",
+  "postCreateCommand": "/workspace/startup.sh"
+}
