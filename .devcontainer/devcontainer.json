@@ -4,13 +4,12 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
-  "features": {},
-  "forwardPorts": [5900],
-  "remoteUser": "vscode",
-  "postCreateCommand": "/home/vscode/startup.sh",
-  "customizations": {
-    "vscode": {
-      "extensions": ["ms-vscode-remote.remote-containers"]
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": {
+      "label": "Spotify Web VNC",
+      "onAutoForward": "openBrowser"
     }
-  }
+  },
+  "remoteUser": "vscode"
 }
