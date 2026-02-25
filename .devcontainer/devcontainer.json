@@ -1,15 +1,9 @@
 {
-  "name": "Spotify + Spicetify Codespace",
+  "name": "Spotify Spicetify",
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".."
   },
   "forwardPorts": [6080],
-  "portsAttributes": {
-    "6080": {
-      "label": "Spotify Web VNC",
-      "onAutoForward": "openBrowser"
-    }
-  },
   "remoteUser": "vscode"
 }
