@@ -1,7 +1,16 @@
 {
-    "name": "Spotify + Spicetify Codespace",
-    "dockerFile": "Dockerfile",
-    "forwardPorts": [6080],
-    "remoteUser": "vscode",
-    "postCreateCommand": "/home/vscode/startup.sh"
+  "name": "Spotify + Spicetify Codespace",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {},
+  "forwardPorts": [5900],
+  "remoteUser": "vscode",
+  "postCreateCommand": "/home/vscode/startup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-vscode-remote.remote-containers"]
+    }
+  }
 }
