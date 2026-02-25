@@ -28,7 +28,7 @@ RUN useradd -ms /bin/bash vscode \
 WORKDIR /home/vscode
 
 # Копіюємо скрипт запуску
-COPY startup.sh /home/vscode/startup.sh
+COPY .devcontainer/startup.sh /home/vscode/startup.sh
 RUN chmod +x /home/vscode/startup.sh
 
 USER vscode
