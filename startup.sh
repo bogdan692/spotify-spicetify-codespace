@@ -1,24 +1,38 @@
 #!/bin/bash
 
-echo "Оновлюємо Spicetify..."
-spicetify upgrade
+# Віртуальний дисплей для GUI
+Xvfb :99 -screen 0 1024x768x16 &
 
-echo "Оновлюємо Spotify..."
-sudo apt update && sudo apt install -y spotify-client
+export DISPLAY=:99
 
-echo "Застосовуємо Spicetify..."
-spicetify apply
+# Запуск PulseAudio
+pulseaudio --start
 
-echo "Створюємо віртуальний sink для PulseAudio..."
-pactl load-module module-null-sink sink_name=vsink
+# Папка конфігурацій Spicetify
+mkdir -p $HOME/.config/spicetify
 
-echo "Запускаємо GUI через Xvfb та xfce4..."
-Xvfb :1 -screen 0 1024x768x24 &
-export DISPLAY=:1
+# Перевірка та оновлення Spicetify
+if command -v spicetify &> /dev/null; then
+    spicetify upgrade
+else
+    npm install -g spicetify-cli
+fi
+
+# Перевірка Spotify
+if command -v spotify &> /dev/null; then
+    echo "Spotify встановлено"
+else
+    echo "Spotify не встановлено"
+fi
+
+# Застосування Spicetify
+spicetify backup apply
+
+# Запуск Spotify
+spotify &
+
+# XFCE + noVNC
 startxfce4 &
 
-echo "Запускаємо x11vnc для підключення через браузер..."
-x11vnc -display :1 -nopw -forever -shared -rfbport 5900 &
-
-echo "Запускаємо Spotify..."
-spotify &
+# Запуск x11vnc для доступу через браузер
+x11vnc -display :99 -nopw -forever &
