@@ -1,13 +1,15 @@
 {
-    "name": "Spotify-Spicetify Codespace",
-    "build": {
-        "dockerfile": "Dockerfile",
-        "context": ".."
-    },
-    "workspaceFolder": "/workspace",
-    "extensions": [
-        "ms-vscode.cpptools",
-        "ms-vscode.cmake-tools"
-    ],
-    "remoteUser": "root"
+  "name": "Spotify + Spicetify",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/startup.sh",
+  "remoteUser": "vscode"
 }
