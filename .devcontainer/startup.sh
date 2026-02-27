@@ -1,24 +1,25 @@
 #!/bin/bash
+
 set -e
 
-# Оновлення системи
-apt-get update && apt-get upgrade -y
+echo "=== START SETUP ==="
 
-# Перевірка Spotify та оновлення
-if command -v spotify &> /dev/null; then
-    echo "Spotify встановлено, перевіряємо оновлення..."
-    apt-get install --only-upgrade -y spotify-client || true
-fi
+# Додаємо spicetify в PATH
+export PATH="$HOME/.spicetify:$PATH"
 
-# Перевірка Spicetify
-if command -v spicetify &> /dev/null; then
-    echo "Spicetify встановлено, оновлюємо..."
-    spicetify upgrade || true
-else
-    echo "Spicetify не знайдено, встановлюємо..."
-    curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh
-fi
+# Чекаємо трохи щоб Spotify точно був доступний
+sleep 2
 
-echo "Запуск Spotify..."
-spotify &
-wait
+echo "=== INIT SPICETIFY ==="
+
+# Ініціалізація
+spicetify config-dir || true
+
+# Базова конфігурація
+spicetify config current_theme SpicetifyDefault
+spicetify config color_scheme base
+
+# Backup + apply
+spicetify backup apply
+
+echo "=== DONE ==="
