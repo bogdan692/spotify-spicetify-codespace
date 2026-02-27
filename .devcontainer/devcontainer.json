@@ -1,13 +1,13 @@
 {
-  "name": "Spotify + Spicetify",
+  "name": "Spotify Browser GUI",
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "esbenp.prettier-vscode"
-      ]
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": {
+      "label": "Spotify GUI",
+      "onAutoForward": "openBrowser"
     }
   },
   "postCreateCommand": "bash .devcontainer/startup.sh",
