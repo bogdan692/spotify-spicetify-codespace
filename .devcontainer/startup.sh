@@ -1,25 +1,38 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
-echo "=== START SETUP ==="
+export DISPLAY=:1
 
-# Додаємо spicetify в PATH
-export PATH="$HOME/.spicetify:$PATH"
+echo "Starting virtual display..."
+Xvfb :1 -screen 0 1280x800x24 &
 
-# Чекаємо трохи щоб Spotify точно був доступний
 sleep 2
 
-echo "=== INIT SPICETIFY ==="
+echo "Starting XFCE..."
+startxfce4 &
 
-# Ініціалізація
-spicetify config-dir || true
+sleep 3
 
-# Базова конфігурація
-spicetify config current_theme SpicetifyDefault
-spicetify config color_scheme base
+echo "Starting VNC..."
+x11vnc -display :1 -nopw -forever -shared &
 
-# Backup + apply
-spicetify backup apply
+echo "Starting noVNC..."
+websockify --web=/usr/share/novnc/ 6080 localhost:5900 &
 
-echo "=== DONE ==="
+echo "Installing Spicetify..."
+if ! command -v spicetify &> /dev/null; then
+    curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-cli/master/install.sh | sh
+fi
+
+export PATH="$HOME/.spicetify:$PATH"
+
+mkdir -p "$HOME/.config/spotify"
+
+spicetify config inject_css 1 replace_colors 1 overwrite_assets 1
+spicetify backup apply || true
+
+echo "Launching Spotify..."
+spotify &
+
+echo "READY → відкрий порт 6080"
